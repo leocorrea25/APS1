@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Data.Guest
+
 {
     public class GuestRepository : IGuestRepository
     {
