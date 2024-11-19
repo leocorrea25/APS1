@@ -7,5 +7,8 @@ namespace Application.Ports
     {
         Task<GuestResponse> CreateGuest(CreateGuestRequest request);
         Task<GuestResponse> GetGuest(int guestId);
+        Task<IEnumerable<GuestResponse>> GetAllGuests();
+        Task<GuestResponse> UpdateGuest(Domain.Entities.Guest request);
+        Task<GuestResponse> DeleteGuest(int guestId);
     }
 }
