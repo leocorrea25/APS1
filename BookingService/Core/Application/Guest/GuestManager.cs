@@ -11,10 +11,7 @@ namespace Application.Guest
     {
         private readonly IGuestRepository _guestRepository;
 
-        public GuestManager(IGuestRepository guestRepository)
-        {
-            _guestRepository = guestRepository;
-        }
+        public GuestManager(IGuestRepository guestRepository) => _guestRepository = guestRepository;
 
         public async Task<GuestResponse> CreateGuest(CreateGuestRequest request)
         {

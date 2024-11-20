@@ -2,6 +2,7 @@
 using Application.Guest.Requests;
 using Application.Ports;
 using Microsoft.AspNetCore.Mvc;
+using Domain.Room.ValueObjects;
 
 namespace API.Controllers
 {
