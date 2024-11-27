@@ -3,13 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Room
 {
-    public class RoomRepository : IRoomRepository
+    public class RoomRepository(HotelDbContext hotelDbContext) : IRoomRepository
     {
-        private readonly HotelDbContext _hotelDbContext;
-        public RoomRepository(HotelDbContext hotelDbContext)
-        {
-            _hotelDbContext = hotelDbContext;
-        }
+        private readonly HotelDbContext _hotelDbContext = hotelDbContext;
 
         async Task<int> IRoomRepository.Create(Domain.Entities.Room room)
         {
