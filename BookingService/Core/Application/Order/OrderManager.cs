@@ -2,6 +2,7 @@
 using Application.Order.Ports;
 using Application.Order.Request;
 using Application.Order.Responses;
+using Application.Product.Ports;
 using Domain.Order.Entities;
 using Domain.Order.Ports;
 
@@ -13,6 +14,7 @@ namespace Application.Order
         private readonly IUserRepository _userRepository;
         private readonly IAddressRepository _addressRepository; 
         private readonly IProductRepository _productRepository;
+        private readonly IProductManager _productManager;
 
         public OrderManager(IOrderRepository orderRepository, IUserRepository userRepository, IAddressRepository addressRepository, IProductRepository productRepository)
         {
@@ -215,9 +217,30 @@ namespace Application.Order
             }
 
             var orders = await _orderRepository.GetAll();
-            var userOrders = orders.Where(o => o.UserId == userId);
+            if (orders == null)
+            {
+                return Enumerable.Empty<Domain.Order.Entities.Order>();
+            }
 
-            return userOrders;
+            if (user.IsSeller)
+            {
+                // Se o usuário for um vendedor, buscar ordens pelos IDs dos produtos que ele criou
+                var products = await _productRepository.GetAllProducts();
+                if (products == null)
+                {
+                    return Enumerable.Empty<Domain.Order.Entities.Order>();
+                }
+
+                var productIds = products.Where(p => p.UserId == userId).Select(p => p.Id);
+                var sellerOrders = orders.Where(o => productIds.Contains(o.ProductId));
+                return sellerOrders;
+            }
+            else
+            {
+                // Se o usuário for um comprador, buscar ordens pelo ID do usuário
+                var userOrders = orders.Where(o => o.UserId == userId);
+                return userOrders;
+            }
         }
     }
 }
