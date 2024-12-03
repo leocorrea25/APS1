@@ -14,33 +14,33 @@ namespace Data.Order
 
         public async Task<int> Create(Domain.Order.Entities.Order order)
         {
-            await _hotelDbContext.Order.AddAsync(order);
+            await _hotelDbContext.Orders.AddAsync(order);
             await _hotelDbContext.SaveChangesAsync();
             return order.Id;
         }
 
         public async Task Delete(int id)
         {
-            var order = await _hotelDbContext.Order.FindAsync(id);
+            var order = await _hotelDbContext.Orders.FindAsync(id);
             if (order != null)
             {
-                _hotelDbContext.Order.Remove(order);
+                _hotelDbContext.Orders.Remove(order);
                 await _hotelDbContext.SaveChangesAsync();
             }
         }
 
-        public async Task<Domain.Order.Entities.Order> Get(int id) => await _hotelDbContext.Order
+        public async Task<Domain.Order.Entities.Order> Get(int id) => await _hotelDbContext.Orders
                 .Include(o => o.Address) // Inclui a propriedade de navegação Address
                 .FirstOrDefaultAsync(o => o.Id == id);
 
         public async Task<IEnumerable<Domain.Order.Entities.Order>> GetAll()
         {
-            return await _hotelDbContext.Order.ToListAsync();
+            return await _hotelDbContext.Orders.ToListAsync();
         }
 
         public async Task Update(Domain.Order.Entities.Order order)
         {
-            var existingOrder = await _hotelDbContext.Order.FindAsync(order.Id);
+            var existingOrder = await _hotelDbContext.Orders.FindAsync(order.Id);
             if (existingOrder != null)
             {
                 _hotelDbContext.Entry(existingOrder).CurrentValues.SetValues(order);
@@ -57,7 +57,7 @@ namespace Data.Order
 
         public async Task SetCompletionStatus(int orderId)
         {
-            var order = await _hotelDbContext.Order.FindAsync(orderId);
+            var order = await _hotelDbContext.Orders.FindAsync(orderId);
             if (order != null)
             {
                 order.MarkAsCompleted();

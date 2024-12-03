@@ -1,25 +1,37 @@
-using Application.Ports;
+using Application.Address;
+using Application.Address.Ports;
+using Application.Booking;
 using Application.Guest;
+using Application.Order;
+using Application.Order.Ports;
+using Application.Ports;
+using Application.Product;
+using Application.Product.Ports;
+using Application.Room;
+using Application.User;
+using Application.User.Ports;
 using Data;
+using Data.Address;
+using Data.Booking;
 using Data.Guest;
+using Data.Order;
+using Data.Product;
+using Data.Room;
+using Data.User;
+using Domain.Order.Ports;
 using Domain.Ports;
 using Microsoft.EntityFrameworkCore;
-using Data.Room;
-using Application.Room;
-using Application.Booking;
-using Data.Booking;
-using Domain.Order.Ports;
-using Application.Order.Ports;
-using Application.Order;
-using Data.Order;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
-#region
+#region Service Registrations
 builder.Services.AddScoped<IGuestManager, GuestManager>();
 builder.Services.AddScoped<IGuestRepository, GuestRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
@@ -28,15 +40,18 @@ builder.Services.AddScoped<IBookingManager, BookingManager>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IOrderManager, OrderManager>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IUserManager, UserMenager>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+builder.Services.AddScoped<IAddressManager, AddressManager>();
+builder.Services.AddScoped<IProductManager, ProductManager>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 #endregion
 
-#region
-
+#region Database Configuration
 var connectionString = builder.Configuration.GetConnectionString("Main");
 builder.Services.AddDbContext<HotelDbContext>(
     options => options.UseSqlServer(connectionString));
-
 #endregion
 
 // Configuração de CORS
@@ -48,9 +63,56 @@ builder.Services.AddCors(options =>
                           .AllowAnyMethod());
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Configuração de JWT
+var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:SecretKey"]);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+
+// Configuração do Swagger para Suporte a Bearer Token
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -63,6 +125,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowSpecificOrigin");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

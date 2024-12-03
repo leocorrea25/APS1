@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20241126172026_addTabela")]
-    partial class addTabela
+    [Migration("20241130233251_AtualizandoOrderMaisUmaDv")]
+    partial class AtualizandoOrderMaisUmaDv
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,6 +109,39 @@ namespace Data.Migrations
                     b.ToTable("Rooms");
                 });
 
+            modelBuilder.Entity("Domain.Order.Entities.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("int");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostalCode", "Number")
+                        .IsUnique();
+
+                    b.ToTable("Addresses", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Order.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -122,20 +155,8 @@ namespace Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("ContactEmail")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ContactName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ContactPhone")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("int");
 
                     b.Property<string>("DeliveryOption")
                         .IsRequired()
@@ -145,22 +166,99 @@ namespace Data.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PickupLocation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("PreferredDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ProductQuantity")
+                        .HasColumnType("int");
 
-                    b.Property<TimeSpan>("PreferredTime")
-                        .HasColumnType("time");
-
-                    b.Property<int>("Quantity")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
                     b.ToTable("Orders", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Order.Entities.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Products", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Order.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsSeller")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Booking", b =>
@@ -235,36 +333,50 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Domain.Order.Entities.Order", b =>
                 {
-                    b.OwnsOne("Domain.Order.Entities.Address", "Address", b1 =>
-                        {
-                            b1.Property<int>("OrderId")
-                                .HasColumnType("int");
+                    b.HasOne("Domain.Order.Entities.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
-
-                            b1.Property<string>("PostalCode")
-                                .IsRequired()
-                                .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
-
-                            b1.Property<string>("Street")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
-
-                    b.Navigation("Address")
+                    b.HasOne("Domain.Order.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Domain.Order.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Order.Entities.Product", b =>
+                {
+                    b.HasOne("Domain.Order.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Order.Entities.User", b =>
+                {
+                    b.HasOne("Domain.Order.Entities.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
                 });
 #pragma warning restore 612, 618
         }

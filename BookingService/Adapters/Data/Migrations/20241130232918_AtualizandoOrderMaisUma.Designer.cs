@@ -4,6 +4,7 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    partial class HotelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241130232918_AtualizandoOrderMaisUma")]
+    partial class AtualizandoOrderMaisUma
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,6 +172,9 @@ namespace Data.Migrations
                     b.Property<int>("ProductQuantity")
                         .HasColumnType("int");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -250,10 +256,6 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

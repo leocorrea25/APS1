@@ -1,6 +1,7 @@
 ﻿using Application.Dtos;
 using Application.Order.Ports;
 using Application.Order.Responses;
+using Domain.Order.Entities;
 using Domain.Order.Ports;
 
 namespace Application.Order
@@ -8,51 +9,95 @@ namespace Application.Order
     public class OrderManager : IOrderManager
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IAddressRepository _addressRepository; 
+        private readonly IProductRepository _productRepository;
 
-        public OrderManager(IOrderRepository orderRepository)
+        public OrderManager(IOrderRepository orderRepository, IUserRepository userRepository, IAddressRepository addressRepository, IProductRepository productRepository)
         {
             _orderRepository = orderRepository;
+            _userRepository = userRepository;
+            _addressRepository = addressRepository;
+            _productRepository = productRepository;
         }
 
-        public async Task<OrderResponse> CreateOrder(Domain.Order.Entities.Order request)
+        public async Task<Domain.Order.Entities.Order> CreateOrder(OrderRequest request)
         {
             try
             {
-
-                var orderId = await _orderRepository.Create(request);
-
-                var order = await _orderRepository.Get(orderId);
-
-                return new OrderResponse
+                // Verifique se o usuário é um comprador e não um vendedor
+                var user = await _userRepository.GetUser(request.UserId);
+                if (user == null || user.IsSeller)
                 {
-                    Data = OrderDto.MapToDto(order),
-                    Success = true,
+                    throw new Exception("Usuario não pode comprar o produto, pois é um vendedor");
+                }
+
+                // Se a opção de entrega for "retirada", o endereço não é necessário
+                Domain.Order.Entities.Address? address = null;
+                int? addressId = null;
+                if (request.DeliveryOption.Equals("entrega", StringComparison.OrdinalIgnoreCase))
+                {
+                    addressId = user.AddressId;
+                    address = await _addressRepository.GetAddress(user.AddressId);
+                }
+
+                // Obtenha o produto e verifique a quantidade disponível
+                var product = await _productRepository.GetProduct(request.ProductId);
+                if (product == null || product.Quantity < request.ProductQuantity)
+                {
+                    throw new Exception("The product is out of stock or does not have enough quantity");
+                }
+
+                // Atualize a quantidade do produto
+                product.Quantity -= request.ProductQuantity;
+                await _productRepository.UpdateProduct(product);
+
+                // Crie a entidade Order a partir do OrderRequest
+                var order = new Domain.Order.Entities.Order
+                {
+                    DeliveryOption = request.DeliveryOption,
+                    AddressId = addressId,
+                    Address = address,
+                    AdditionalInstructions = request.AdditionalInstructions,
+                    ProductId = request.ProductId,
+                    ProductQuantity = request.ProductQuantity,
+                    UserId = request.UserId,
+                    User = user
                 };
+
+                // Crie a ordem no repositório
+                var orderId = await _orderRepository.Create(order);
+
+                // Obtenha a ordem criada
+                var createdOrder = await _orderRepository.Get(orderId);
+
+                return createdOrder;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return new OrderResponse
-                {
-                    Success = false,
-                    ErrorCode = ErrorCode.INVALID_PERSON_ID,
-                    Message = "The order is not valid"
-                };
+                throw new Exception("The order is not valid: " + ex.Message);
             }
-            
         }
 
-        public async Task MarkAsCompleted(int orderId)
+        public async Task<bool> MarkAsCompleted(int orderId, int userId)
         {
             var order = await _orderRepository.Get(orderId);
+            var user = await _userRepository.GetUser(userId);
+
+            if(user.IsSeller != true)
+            {
+                throw new Exception("Usuário não pode marcar o pedido como concluído, pois não é um vendedor");
+            }
 
             if (order == null)
             {
-                return;
+                return false;
             }
 
             order.MarkAsCompleted();
 
             await _orderRepository.Update(order);
+            return true;
         }
 
         public async Task<OrderResponse> GetOrder(int orderId)
@@ -101,7 +146,6 @@ namespace Application.Order
 
                 // Atualize as propriedades do pedido diretamente
                 existingOrder = order;
-                existingOrder.Quantity = order.Quantity;
                 // Atualize outras propriedades conforme necessário
 
                 await _orderRepository.Update(existingOrder);

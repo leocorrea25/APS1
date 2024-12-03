@@ -4,6 +4,7 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    partial class HotelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241130183714_AtualizarOrders")]
+    partial class AtualizarOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,12 +122,14 @@ namespace Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("PostalCode")
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Street")
                         .IsRequired()
@@ -152,8 +157,23 @@ namespace Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int?>("AddressId")
+                    b.Property<int>("AddressId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ContactEmail")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ContactName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ContactPhone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("DeliveryOption")
                         .IsRequired()
@@ -163,10 +183,24 @@ namespace Data.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("PickupLocation")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("PreferredDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("PreferredTime")
+                        .HasColumnType("time");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
@@ -241,19 +275,10 @@ namespace Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -337,7 +362,8 @@ namespace Data.Migrations
                     b.HasOne("Domain.Order.Entities.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("Domain.Order.Entities.Product", "Product")
                         .WithMany()

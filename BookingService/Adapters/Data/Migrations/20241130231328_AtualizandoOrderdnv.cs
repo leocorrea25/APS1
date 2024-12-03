@@ -5,16 +5,16 @@
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class AtualizandoOrderdnv : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "Status",
-                table: "Bokings",
-                type: "nvarchar(max)",
-                nullable: false,
+            migrationBuilder.AlterColumn<int>(
+                name: "AddressId",
+                table: "Orders",
+                type: "int",
+                nullable: true,
                 oldClrType: typeof(int),
                 oldType: "int");
         }
@@ -23,12 +23,14 @@ namespace Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<int>(
-                name: "Status",
-                table: "Bokings",
+                name: "AddressId",
+                table: "Orders",
                 type: "int",
                 nullable: false,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)");
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true);
         }
     }
 }

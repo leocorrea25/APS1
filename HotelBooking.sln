@@ -47,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainTests", "BookingServi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "BookingService\Core\Shared\Shared.csproj", "{CA8AF7F8-8A52-4BD2-AB7F-6AED23894D4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTest", "ApplicationTest\ApplicationTest.csproj", "{E8D717F6-C504-44E0-9115-69D42395795F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationTest", "ApplicationTest\ApplicationTest.csproj", "{E8D717F6-C504-44E0-9115-69D42395795F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

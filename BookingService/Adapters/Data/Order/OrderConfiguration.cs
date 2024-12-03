@@ -8,34 +8,11 @@ namespace Data.Order
     {
         public void Configure(EntityTypeBuilder<Domain.Order.Entities.Order> builder)
         {
-            // Define a chave primária
             builder.HasKey(e => e.Id);
 
-            // Mapeamento de propriedades simples
             builder.Property(e => e.DeliveryOption)
                 .IsRequired()
                 .HasMaxLength(50);
-
-            builder.Property(e => e.Quantity)
-                .IsRequired();
-
-            builder.Property(e => e.ContactName)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            builder.Property(e => e.ContactPhone)
-                .IsRequired()
-                .HasMaxLength(20);
-
-            builder.Property(e => e.ContactEmail)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            builder.Property(e => e.PreferredDate)
-                .IsRequired();
-
-            builder.Property(e => e.PreferredTime)
-                .IsRequired();
 
             builder.Property(e => e.AdditionalInstructions)
                 .HasMaxLength(500);
@@ -43,20 +20,27 @@ namespace Data.Order
             builder.Property(e => e.IsCompleted)
                 .IsRequired();
 
-            // Configuração do tipo de propriedade composta Address
-            builder.OwnsOne(e => e.Address, address =>
-            {
-                address.Property(a => a.Street)
-                    .HasMaxLength(200);
+            builder.Property(e => e.ProductQuantity)
+                .IsRequired();
 
-                address.Property(a => a.City)
-                    .HasMaxLength(100);
+            builder.HasOne(e => e.Address)
+                .WithMany()
+                .HasForeignKey(e => e.AddressId)
+                .OnDelete(DeleteBehavior.NoAction); // Evitar cascata no Address
 
-                address.Property(a => a.PostalCode)
-                    .HasMaxLength(20);
-            });
 
-            // Nome da tabela no banco de dados
+            builder.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction); // Evitar cascata no User
+
+            builder.HasOne(e => e.Product)
+                .WithMany()
+                .HasForeignKey(e => e.ProductId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction); // Evitar cascata no Product
+
             builder.ToTable("Orders");
         }
     }
