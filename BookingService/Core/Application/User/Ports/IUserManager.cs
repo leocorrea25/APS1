@@ -6,7 +6,7 @@ namespace Application.User.Ports
 {
     public interface IUserManager
     {
-        Task<Domain.Order.Entities.User> CreateUser(Domain.Order.Entities.User request);
+        Task<Domain.Order.Entities.User> CreateUser(UserRequest request);
         Task<Domain.Order.Entities.User> GetUser(int userId);
         Task<Domain.Order.Entities.User> Authenticate(LoginRequest loginRequest);
         Task<IEnumerable<Domain.Order.Entities.User>> GetAllUsers();

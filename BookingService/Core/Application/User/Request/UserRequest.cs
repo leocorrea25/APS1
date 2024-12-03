@@ -7,7 +7,9 @@ namespace Domain.Order.Requests
         public string Password { get; set; }
         public string PhoneNumber { get; set; }
         public bool IsSeller { get; set; } // Flag indicando se é vendedor ou comprador
-        public string PostalCodeAddress { get; set; }
+        public int PostalCodeAddress { get; set; }
         public int NumberAddress { get; set; }
+        public string Street { get; set; }
+        public string City { get; set; }
     }
 }

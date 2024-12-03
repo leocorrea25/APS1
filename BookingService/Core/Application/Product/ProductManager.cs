@@ -1,5 +1,6 @@
 ﻿using Application.Address.Ports;
 using Application.Product.Ports;
+using Domain.Order.Entities;
 using Domain.Order.Ports;
 using Domain.Order.Requests;
 using System;
@@ -19,6 +20,24 @@ namespace Application.Product
         {
             _productRepository = productRepository;
             _userRepository = userRepository;
+        }
+
+        public async Task<IEnumerable<Domain.Order.Entities.Product>> GetProductByUser(int id)
+        {
+            var user = await _userRepository.GetUser(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            if (user.IsSeller == false)
+            {
+                return null;
+            }
+
+            var products = await _productRepository.GetAllProducts();
+            return products.Where(p => p.UserId == id);
+            
         }
 
         async Task<Domain.Order.Entities.Product> IProductManager.CreateProduct(ProductRequest productRequest, int UserId)

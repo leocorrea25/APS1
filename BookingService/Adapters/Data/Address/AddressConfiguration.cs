@@ -24,10 +24,6 @@ namespace Data.Address
             builder.Property(e => e.Number)
                 .IsRequired();
 
-            // Índice único para PostalCode e Number
-            builder.HasIndex(e => new { e.PostalCode, e.Number })
-                .IsUnique();
-
             // Nome da tabela no banco de dados
             builder.ToTable("Addresses");
         }

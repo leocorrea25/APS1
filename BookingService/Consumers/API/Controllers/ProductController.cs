@@ -9,14 +9,9 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductController(IProductManager productManager) : ControllerBase
     {
-        private readonly IProductManager _productManager;
-
-        public ProductController(IProductManager productManager)
-        {
-            _productManager = productManager;
-        }
+        private readonly IProductManager _productManager = productManager;
 
         [HttpPost]
         [Authorize]
@@ -101,6 +96,32 @@ namespace API.Controllers
                 return NotFound();
             }
             return Ok(updatedProduct);
+        }
+
+        [HttpGet("user-products")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Product>>> GetUserProducts()
+        {
+            // Obter o ID do usuário autenticado
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Usuário não autenticado.");
+            }
+
+            if (!int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized("ID de usuário inválido.");
+            }
+
+            // Buscar os produtos do usuário
+            var products = await _productManager.GetProductByUser(userId);
+            if (products == null || !products.Any())
+            {
+                return NotFound("Nenhum produto encontrado para este usuário.");
+            }
+
+            return Ok(products);
         }
     }
 }

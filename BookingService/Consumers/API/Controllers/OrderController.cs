@@ -1,4 +1,5 @@
 ﻿using Application.Order.Ports;
+using Application.Order.Request;
 using Domain.Order.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,12 +25,51 @@ namespace API.Controllers
         [Authorize]
         public async Task<IActionResult> CreateOrder([FromBody] OrderRequest order)
         {
+
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Usuário não autenticado.");
+            }
+
+            if (!int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized("ID de usuário inválido.");
+            }
+            order.UserId = userId;
+ 
             var response = await _orderManager.CreateOrder(order);
             if (response != null)
             {
                 return Ok(response);
             }
             return BadRequest(response);
+        }
+
+        [HttpGet("user-Orders")]
+        [Authorize]
+        public async Task<IActionResult> GetUserProducts()
+        {
+            // Obter o ID do usuário autenticado
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Usuário não autenticado.");
+            }
+
+            if (!int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized("ID de usuário inválido.");
+            }
+
+            // Buscar os produtos do usuário
+            var order = await _orderManager.GetOrdertByUser(userId);
+            if (order == null || !order.Any())
+            {
+                return NotFound("Nenhum produto encontrado para este usuário.");
+            }
+
+            return Ok(order);
         }
 
         [HttpGet("{orderId}")]
@@ -48,15 +88,16 @@ namespace API.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllOrders()
         {
+
             var response = await _orderManager.GetAllOrders();
             return Ok(response);
         }
 
         [HttpPut("{orderId}")]
         [Authorize]
-        public async Task<IActionResult> UpdateOrder(int orderId, [FromBody] Domain.Order.Entities.Order order)
+        public async Task<IActionResult> UpdateOrder(int orderId, [FromBody] EditOrderRequest order)
         {
-            if (orderId != order.Id)
+            if (orderId != order.OrderId)
             {
                 return BadRequest("Order ID mismatch");
             }

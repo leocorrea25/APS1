@@ -13,6 +13,7 @@ namespace Application.Product.Ports
         Task<Domain.Order.Entities.Product> CreateProduct(ProductRequest product, int userId);
         Task<Domain.Order.Entities.Product> GetProduct(int productId);
         Task<IEnumerable<Domain.Order.Entities.Product>> GetAllProducts();
+        Task<IEnumerable<Domain.Order.Entities.Product>> GetProductByUser(int id);
         Task<Domain.Order.Entities.Product> UpdateProduct(ProductRequest product, int userId);
         Task<Domain.Order.Entities.Product> DeleteProduct(int productId);
     }

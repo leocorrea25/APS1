@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
+using Domain.Order.Requests;
 
 
 namespace Application.User
@@ -57,21 +58,16 @@ namespace Application.User
 
             return user; // Retorne o usuário com o token JWT
         }
-        async Task<Domain.Order.Entities.User> IUserManager.CreateUser(Domain.Order.Entities.User request)
+        async Task<Domain.Order.Entities.User> IUserManager.CreateUser(UserRequest request)
         {
-            var address = await _addressManager.GetAddressForPAndN(request.Address.PostalCode, request.Address.Number);
-            if (address == null)
+            var address = new Domain.Order.Entities.Address
             {
-                address = new Domain.Order.Entities.Address
-                {
-                    PostalCode = request.Address.PostalCode,
-                    Number = request.Address.Number,
-                    Street = request.Address.Street,
-                    City = request.Address.City,
-                     
-                };
-                address = await _addressManager.CreateAddress(address);
-            }
+                PostalCode = request.PostalCodeAddress,
+                Number = request.NumberAddress,
+                Street = request.Street,
+                City = request.City
+            };
+            address = await _addressManager.CreateAddress(address);
 
             var user = new Domain.Order.Entities.User
             {
@@ -84,7 +80,34 @@ namespace Application.User
                 AddressId = address.Id
             };
 
-            return await _userRepository.CreateUser(user);
+            // Defina uma chave secreta temporária
+            string secretKey = "minha_chave_secreta_temporaria_123456";
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                throw new ArgumentNullException(nameof(secretKey), "Secret key cannot be null or empty.");
+            }
+
+            // Gerar o token JWT
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(secretKey);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.IsSeller ? "Seller" : "Buyer")
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            user.Token = tokenHandler.WriteToken(token);
+
+            // Salvar o usuário no banco de dados
+            user = await _userRepository.CreateUser(user);
+
+            return user; // Retorne o usuário com o token JWT
         }
 
         async Task<Domain.Order.Entities.User> IUserManager.DeleteUser(int userId)

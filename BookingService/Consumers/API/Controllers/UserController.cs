@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Domain.Order.Requests;
 
 
 namespace API.Controllers
@@ -62,7 +63,7 @@ namespace API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<User>> CreateUser([FromBody] User userRequest)
+        public async Task<ActionResult<User>> CreateUser([FromBody] UserRequest userRequest)
         {
             var user = await _userManager.CreateUser(userRequest);
             if (user == null)

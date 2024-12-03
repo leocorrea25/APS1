@@ -1,5 +1,6 @@
 ﻿using Application.Dtos;
 using Application.Order.Ports;
+using Application.Order.Request;
 using Application.Order.Responses;
 using Domain.Order.Entities;
 using Domain.Order.Ports;
@@ -128,11 +129,11 @@ namespace Application.Order
             return orders;
         }
 
-        public async Task<OrderResponse> UpdateOrder(Domain.Order.Entities.Order order)
+        public async Task<OrderResponse> UpdateOrder(EditOrderRequest order)
         {
             try
             {
-                var existingOrder = await _orderRepository.Get(order.Id);
+                var existingOrder = await _orderRepository.Get(order.OrderId);
 
                 if (existingOrder == null)
                 {
@@ -145,7 +146,11 @@ namespace Application.Order
                 }
 
                 // Atualize as propriedades do pedido diretamente
-                existingOrder = order;
+                existingOrder.DeliveryOption = order.DeliveryOption;
+                existingOrder.AdditionalInstructions = order.AdditionalInstructions;
+                existingOrder.ProductId = order.ProductId;
+                existingOrder.ProductQuantity = order.ProductQuantity;
+                existingOrder.UserId = order.UserId;
                 // Atualize outras propriedades conforme necessário
 
                 await _orderRepository.Update(existingOrder);
@@ -156,7 +161,6 @@ namespace Application.Order
                     Success = true,
                 };
             }
-      
             catch (Exception)
             {
                 return new OrderResponse
@@ -200,6 +204,20 @@ namespace Application.Order
                     Message = "There was an error when deleting from DB"
                 };
             }
+        }
+
+        public async Task<IEnumerable<Domain.Order.Entities.Order>> GetOrdertByUser(int userId)
+        {
+            var user = await _userRepository.GetUser(userId);
+            if (user == null)
+            {
+                return Enumerable.Empty<Domain.Order.Entities.Order>();
+            }
+
+            var orders = await _orderRepository.GetAll();
+            var userOrders = orders.Where(o => o.UserId == userId);
+
+            return userOrders;
         }
     }
 }
