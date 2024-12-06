@@ -45,6 +45,7 @@ namespace Application.User
         {
             // Verifique se o usuário existe e se a senha está correta
             var user = await _userRepository.GetUserByEmail(loginRequest.Email);
+
             if (user == null || user.Password != loginRequest.Password)
             {
                 return Error(new ValidationException("Invalid username or password."));
@@ -86,15 +87,16 @@ namespace Application.User
                     return Error(new ValidationException("Email already in use."));
                 }
 
-
-                var address = new Domain.Entities.Address
+                var addressEntity = new Domain.Entities.Address
                 {
                     PostalCode = request.PostalCodeAddress,
                     Number = request.NumberAddress,
                     Street = request.Street,
                     City = request.City
                 };
-                address = await _addressManager.CreateAddress(address);
+
+                var address = await _addressManager.CreateAddress(addressEntity);
+             
 
                 var user = new Domain.Entities.User
                 {
@@ -121,9 +123,9 @@ namespace Application.User
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.IsSeller ? "Seller" : "Buyer")
+                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Role, user.IsSeller ? "Seller" : "Buyer")
                     }),
                     Expires = DateTime.UtcNow.AddHours(1),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -131,10 +133,12 @@ namespace Application.User
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 user.Token = tokenHandler.WriteToken(token);
 
+                var userReturn = user;
                 // Salvar o usuário no banco de dados
                 user = await _userRepository.CreateUser(user);
+               
 
-                return Success(user); // Retorne o usuário com o token JWT
+                return Success(userReturn); // Retorne o usuário com o token JWT
             }
             catch (Exception ex)
             {

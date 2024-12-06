@@ -69,12 +69,9 @@ namespace Application.Order
                 };
 
                 // Crie a ordem no repositório
-                var orderId = await _orderRepository.Create(order);
+                 await _orderRepository.Create(order);
 
-                // Obtenha a ordem criada
-                var createdOrder = await _orderRepository.Get(orderId);
-
-                return createdOrder;
+                return order;
             }
             catch (Exception ex)
             {

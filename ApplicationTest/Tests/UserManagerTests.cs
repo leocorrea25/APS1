@@ -21,7 +21,18 @@ class UserManagerTests
     public void SetUp()
     {
         _addressRepository = new Mock<IAddressRepository>();
-        _addressManager = new AddressManager(_addressRepository.Object);
+        var mockAddressManager = new Mock<IAddressManager>();
+        mockAddressManager.Setup(m => m.CreateAddress(It.IsAny<Address>()))
+            .ReturnsAsync(new Address
+            {
+                Id = 1,
+                PostalCode = 81110070,
+                Number = 123,
+                Street = "Rua dos Bobos",
+                City = "Curitiba"
+            });
+
+        _addressManager = mockAddressManager.Object;
 
         _userRepository = new Mock<IUserRepository>();
         _userManager = new UserManager(
@@ -82,6 +93,19 @@ class UserManagerTests
         var user = userVal.Data;
 
         Assert.That(user, Is.Not.Null);
-        Assert.That(user.Name, Is.EqualTo("John Doe"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(user.Name, Is.EqualTo("John Doe"));
+            Assert.That(user.Email, Is.EqualTo("johndoe@email.com"));
+            Assert.That(user.Password, Is.EqualTo("P4ssw0rd!123"));
+            Assert.That(user.PhoneNumber, Is.EqualTo("41999998888"));
+            Assert.That(user.IsSeller, Is.False);
+            Assert.That(user.Address, Is.Not.Null);
+            Assert.That(user.Address.Street, Is.EqualTo("Rua dos Bobos"));
+            Assert.That(user.Address.City, Is.EqualTo("Curitiba"));
+            Assert.That(user.Address.PostalCode, Is.EqualTo(81110070));
+            Assert.That(user.Address.Number, Is.EqualTo(123));
+            Assert.That(user.Token, Is.Not.Empty);
+        });
     }
 }

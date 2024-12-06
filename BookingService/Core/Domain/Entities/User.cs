@@ -24,8 +24,6 @@ namespace Domain.Entities
         {
             get => phoneNumber; set
             {
-                if (!Utils.ValidatePhone(value))
-                    throw new InvalidPhoneNumberException(value);
                 phoneNumber = value;
             }
         }

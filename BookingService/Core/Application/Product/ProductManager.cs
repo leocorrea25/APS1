@@ -62,7 +62,9 @@ namespace Application.Product
                 UserId = UserId
             };
 
-            return await _productRepository.CreateProduct(product);
+            await _productRepository.CreateProduct(product);
+
+            return product;
         }
 
         async Task<Domain.Entities.Product> IProductManager.DeleteProduct(int productId)

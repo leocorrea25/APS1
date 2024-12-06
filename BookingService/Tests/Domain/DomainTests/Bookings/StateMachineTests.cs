@@ -12,13 +12,6 @@ namespace DomainTests
         {
         }
 
-        //Iniciar status como criado
-         [Test]
-        public void ShouldAwaysStartWithCreatedStatus()
-        {
-            var booking = new Booking();
-            Assert.Pass();
-        }
         
         //Definir status como pago ao pagar por uma reserva com status criado
         [Test]

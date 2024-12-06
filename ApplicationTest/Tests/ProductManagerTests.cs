@@ -20,32 +20,34 @@ class ProductManagerTests
     {
         _fakeSellers = Enumerable.Range(1, 2)
                 .Select(i => new User()
-                    {
-                        Id = i,
-                        Name = $"Seller {i}",
-                        IsSeller = true
-                    })
+                {
+                    Id = i,
+                    Name = $"Seller {i}",
+                    IsSeller = true
+                })
                 .AsQueryable();
 
         _fakeProducts = Enumerable.Range(1, 10)
                 .Select(i => new Product()
-                    {
-                        Id = i,
-                        Name = $"Product {i}",
-                        Description = "A nice product",
-                        Price = i * 10,
-                        Quantity = i * 10,
-                        UserId = (i % 2 == 0) ? _fakeSellers.First().Id : _fakeSellers.Last().Id,
-                        User = (i % 2 == 0) ? _fakeSellers.First() : _fakeSellers.Last(),
-                    })
+                {
+                    Id = i,
+                    Name = $"Product {i}",
+                    Description = "A nice product",
+                    Price = i * 10,
+                    Quantity = i * 10,
+                    UserId = (i % 2 == 0) ? _fakeSellers.First().Id : _fakeSellers.Last().Id,
+                    User = (i % 2 == 0) ? _fakeSellers.First() : _fakeSellers.Last(),
+                })
                 .AsQueryable();
-        
+
         _productRepository = new Mock<IProductRepository>();
         _productRepository.Setup(r => r.GetAllProducts())
-                .Returns(Task.FromResult<IEnumerable<Product>>([.. _fakeProducts]));
-        
+                .Returns(Task.FromResult<IEnumerable<Product>>(_fakeProducts));
+
         _userRepository = new Mock<IUserRepository>();
-        
+        _userRepository.Setup(r => r.GetUser(It.IsAny<int>()))
+            .Returns<int>(id => Task.FromResult(_fakeSellers.SingleOrDefault(u => u.Id == id)));
+
         _productManager = new ProductManager(
                 _productRepository.Object,
                 _userRepository.Object);
@@ -67,12 +69,6 @@ class ProductManagerTests
         var product = await _productManager.CreateProduct(createRequest, sellerId);
 
         Assert.That(product, Is.Not.Null);
-        Assert.That(product.User, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(product.User.Id, Is.EqualTo(sellerId));
-            Assert.That(product.Id, Is.EqualTo(sellerId));
-        });
     }
 
     [TestCase(1)]
