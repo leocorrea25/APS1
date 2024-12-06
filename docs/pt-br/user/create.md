@@ -3,7 +3,9 @@
 Cria um novo usuário.
 
 ```bash
-curl -X POST https://localhost:5035/api/user \
+curl -X 'POST' \
+  'http://localhost:5035/api/User' \
+  -H 'accept: text/plain' \
   -H 'Content-Type: application/json' \
   -d '{
   "name": "joao",
@@ -11,7 +13,7 @@ curl -X POST https://localhost:5035/api/user \
   "password": "123456",
   "phoneNumber": "+5541988776655",
   "isSeller": true,
-  "postalCodeAddress": 81810630,
+  "postalCodeAddress": 123,
   "numberAddress": 123,
   "street": "Rua legal",
   "city": "cidade ruim"

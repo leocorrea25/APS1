@@ -77,14 +77,16 @@ namespace API.Controllers
 
             var user = userVal.Value;
 
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            // return Created(user);
+
+            return CreatedAtAction(nameof(GetUser), new { userId = user.Id }, user);
         }
 
         [HttpDelete("{userId}")]
         [Authorize]
-        public async Task<ActionResult<User>> DeleteUser(int id)
+        public async Task<ActionResult<User>> DeleteUser(int userId)
         {
-            var userVal = await _userManager.DeleteUser(id);
+            var userVal = await _userManager.DeleteUser(userId);
             if (!userVal.IsValid)
             {
                 return NotFound();
