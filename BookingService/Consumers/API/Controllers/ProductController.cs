@@ -1,5 +1,5 @@
 ﻿using Application.Product.Ports;
-using Domain.Order.Entities;
+using Domain.Entities;
 using Domain.Order.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

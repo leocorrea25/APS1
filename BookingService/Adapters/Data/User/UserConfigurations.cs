@@ -11,9 +11,9 @@ namespace Data.User
     internal class UserConfigurations
     {
     }
-    public class UserConfiguration : IEntityTypeConfiguration<Domain.Order.Entities.User>
+    public class UserConfiguration : IEntityTypeConfiguration<Domain.Entities.User>
     {
-        public void Configure(EntityTypeBuilder<Domain.Order.Entities.User> builder)
+        public void Configure(EntityTypeBuilder<Domain.Entities.User> builder)
         {
             // Define a chave primária
             builder.HasKey(e => e.Id);

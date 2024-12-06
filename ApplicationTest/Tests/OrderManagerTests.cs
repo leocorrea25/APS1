@@ -1,8 +1,8 @@
 using Application.Order.Request;
 using Application.Order.Responses;
 using Application.Order.Ports;
-using Domain.Order.Entities;
-using Domain.Order.Ports;
+using Domain.Entities;
+using Domain.Ports;
 using Moq;
 using Application.Order;
 
@@ -30,7 +30,7 @@ class OrderManagerTests
                 Name = $"User {i}",
                 IsSeller = i % 2 == 0
             }).AsQueryable();
-        
+
         _fakeProducts = Enumerable.Range(1, 5)
             .Select(i => new Product
             {

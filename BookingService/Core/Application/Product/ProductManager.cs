@@ -1,7 +1,7 @@
 ﻿using Application.Address.Ports;
 using Application.Product.Ports;
-using Domain.Order.Entities;
-using Domain.Order.Ports;
+using Domain.Entities;
+using Domain.Ports;
 using Domain.Order.Requests;
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace Application.Product
             _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<Domain.Order.Entities.Product>> GetProductByUser(int id)
+        public async Task<IEnumerable<Domain.Entities.Product>> GetProductByUser(int id)
         {
             var user = await _userRepository.GetUser(id);
             if (user == null)
@@ -40,7 +40,7 @@ namespace Application.Product
             
         }
 
-        async Task<Domain.Order.Entities.Product> IProductManager.CreateProduct(ProductRequest productRequest, int UserId)
+        async Task<Domain.Entities.Product> IProductManager.CreateProduct(ProductRequest productRequest, int UserId)
         {
             var user = await _userRepository.GetUser(UserId);
             if (user == null)
@@ -53,7 +53,7 @@ namespace Application.Product
                 return null;
             }
 
-            var product = new Domain.Order.Entities.Product
+            var product = new Domain.Entities.Product
             {
                 Name = productRequest.Name,
                 Description = productRequest.Description,
@@ -65,7 +65,7 @@ namespace Application.Product
             return await _productRepository.CreateProduct(product);
         }
 
-        async Task<Domain.Order.Entities.Product> IProductManager.DeleteProduct(int productId)
+        async Task<Domain.Entities.Product> IProductManager.DeleteProduct(int productId)
         {
             var product = await _productRepository.GetProduct(productId);
             if (product == null)
@@ -77,17 +77,17 @@ namespace Application.Product
             return result ? product : null;
         }
 
-        async Task<IEnumerable<Domain.Order.Entities.Product>> IProductManager.GetAllProducts()
+        async Task<IEnumerable<Domain.Entities.Product>> IProductManager.GetAllProducts()
         {
             return await _productRepository.GetAllProducts();
         }
 
-        async Task<Domain.Order.Entities.Product> IProductManager.GetProduct(int productId)
+        async Task<Domain.Entities.Product> IProductManager.GetProduct(int productId)
         {
             return await _productRepository.GetProduct(productId);
         }
 
-        async Task<Domain.Order.Entities.Product> IProductManager.UpdateProduct(ProductRequest product, int userId)
+        async Task<Domain.Entities.Product> IProductManager.UpdateProduct(ProductRequest product, int userId)
         {
             var existingProduct = await _productRepository.GetProduct(product.Id);
             if (existingProduct == null)

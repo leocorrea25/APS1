@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Order.Entities;
+using Domain.Entities;
 
 namespace Application.Dtos
 {
@@ -17,9 +17,9 @@ namespace Application.Dtos
         public string AdditionalInstructions { get; set; }
         public bool IsCompleted { get; set; }
 
-        public static Domain.Order.Entities.Order MapToEntity(OrderDto orderDto)
+        public static Domain.Entities.Order MapToEntity(OrderDto orderDto)
         {
-            return new Domain.Order.Entities.Order
+            return new Domain.Entities.Order
             {
                 Id = orderDto.Id,
                 DeliveryOption = orderDto.DeliveryOption,
@@ -28,7 +28,7 @@ namespace Application.Dtos
             };
         }
 
-        public static OrderDto MapToDto(Domain.Order.Entities.Order order)
+        public static OrderDto MapToDto(Domain.Entities.Order order)
         {
             return new OrderDto
             {

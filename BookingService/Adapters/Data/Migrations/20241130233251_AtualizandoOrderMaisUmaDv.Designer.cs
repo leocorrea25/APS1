@@ -109,7 +109,7 @@ namespace Data.Migrations
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("Domain.Order.Entities.Address", b =>
+            modelBuilder.Entity("Domain.Entities.Address", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,7 +142,7 @@ namespace Data.Migrations
                     b.ToTable("Addresses", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Order.Entities.Order", b =>
+            modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -186,7 +186,7 @@ namespace Data.Migrations
                     b.ToTable("Orders", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Order.Entities.Product", b =>
+            modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -220,7 +220,7 @@ namespace Data.Migrations
                     b.ToTable("Products", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Order.Entities.User", b =>
+            modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -331,20 +331,20 @@ namespace Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Order.Entities.Order", b =>
+            modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
-                    b.HasOne("Domain.Order.Entities.Address", "Address")
+                    b.HasOne("Domain.Entities.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Domain.Order.Entities.Product", "Product")
+                    b.HasOne("Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Domain.Order.Entities.User", "User")
+                    b.HasOne("Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -357,9 +357,9 @@ namespace Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Order.Entities.Product", b =>
+            modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
-                    b.HasOne("Domain.Order.Entities.User", "User")
+                    b.HasOne("Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -368,9 +368,9 @@ namespace Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Order.Entities.User", b =>
+            modelBuilder.Entity("Domain.Entities.User", b =>
                 {
-                    b.HasOne("Domain.Order.Entities.Address", "Address")
+                    b.HasOne("Domain.Entities.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -3,8 +3,8 @@ using Application.Order.Ports;
 using Application.Order.Request;
 using Application.Order.Responses;
 using Application.Product.Ports;
-using Domain.Order.Entities;
-using Domain.Order.Ports;
+using Domain.Entities;
+using Domain.Ports;
 
 namespace Application.Order
 {
@@ -12,7 +12,7 @@ namespace Application.Order
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IAddressRepository _addressRepository; 
+        private readonly IAddressRepository _addressRepository;
         private readonly IProductRepository _productRepository;
         private readonly IProductManager _productManager;
 
@@ -24,7 +24,7 @@ namespace Application.Order
             _productRepository = productRepository;
         }
 
-        public async Task<Domain.Order.Entities.Order> CreateOrder(OrderRequest request)
+        public async Task<Domain.Entities.Order> CreateOrder(OrderRequest request)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace Application.Order
                 }
 
                 // Se a opção de entrega for "retirada", o endereço não é necessário
-                Domain.Order.Entities.Address? address = null;
+                Domain.Entities.Address? address = null;
                 int? addressId = null;
                 if (request.DeliveryOption.Equals("entrega", StringComparison.OrdinalIgnoreCase))
                 {
@@ -56,7 +56,7 @@ namespace Application.Order
                 await _productRepository.UpdateProduct(product);
 
                 // Crie a entidade Order a partir do OrderRequest
-                var order = new Domain.Order.Entities.Order
+                var order = new Domain.Entities.Order
                 {
                     DeliveryOption = request.DeliveryOption,
                     AddressId = addressId,
@@ -87,7 +87,7 @@ namespace Application.Order
             var order = await _orderRepository.Get(orderId);
             var user = await _userRepository.GetUser(userId);
 
-            if(user.IsSeller != true)
+            if (user.IsSeller != true)
             {
                 throw new Exception("Usuário não pode marcar o pedido como concluído, pois não é um vendedor");
             }
@@ -124,7 +124,7 @@ namespace Application.Order
             };
         }
 
-        public async Task<IEnumerable<Domain.Order.Entities.Order>> GetAllOrders()
+        public async Task<IEnumerable<Domain.Entities.Order>> GetAllOrders()
         {
             var orders = await _orderRepository.GetAll();
 
@@ -208,18 +208,18 @@ namespace Application.Order
             }
         }
 
-        public async Task<IEnumerable<Domain.Order.Entities.Order>> GetOrdertByUser(int userId)
+        public async Task<IEnumerable<Domain.Entities.Order>> GetOrdertByUser(int userId)
         {
             var user = await _userRepository.GetUser(userId);
             if (user == null)
             {
-                return Enumerable.Empty<Domain.Order.Entities.Order>();
+                return Enumerable.Empty<Domain.Entities.Order>();
             }
 
             var orders = await _orderRepository.GetAll();
             if (orders == null)
             {
-                return Enumerable.Empty<Domain.Order.Entities.Order>();
+                return Enumerable.Empty<Domain.Entities.Order>();
             }
 
             if (user.IsSeller)
@@ -228,7 +228,7 @@ namespace Application.Order
                 var products = await _productRepository.GetAllProducts();
                 if (products == null)
                 {
-                    return Enumerable.Empty<Domain.Order.Entities.Order>();
+                    return Enumerable.Empty<Domain.Entities.Order>();
                 }
 
                 var productIds = products.Where(p => p.UserId == userId).Select(p => p.Id);

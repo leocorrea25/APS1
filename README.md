@@ -1,4 +1,7 @@
-# HotelBooking
+# ECommerce API
+
+English
+[Português](README.pt-br.md)
 
 ## Dependencies
 
@@ -8,9 +11,3 @@ mssql-server >= 2019
 ```
 
 ## Quick Start
-
-1. Install dependencies
-
-```bash
-
-```

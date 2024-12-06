@@ -1,4 +1,4 @@
-﻿using Domain.Order.Ports;
+﻿using Domain.Ports;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,14 +17,14 @@ namespace Data.User
             _hotelDbContext = hotelDbContext;
         }
 
-        async Task<Domain.Order.Entities.User> IUserRepository.CreateUser(Domain.Order.Entities.User user)
+        async Task<Domain.Entities.User> IUserRepository.CreateUser(Domain.Entities.User user)
         {
             _hotelDbContext.Users.Add(user);
             await _hotelDbContext.SaveChangesAsync();
             return user;
         }
 
-        public async Task<Domain.Order.Entities.User> GetUserByEmail(string email)
+        public async Task<Domain.Entities.User?> GetUserByEmail(string email)
         {
             return await _hotelDbContext.Users.SingleOrDefaultAsync(u => u.Email == email);
         }
@@ -42,17 +42,17 @@ namespace Data.User
             return true;
         }
 
-        async Task<IEnumerable<Domain.Order.Entities.User>> IUserRepository.GetAllUsers()
+        async Task<IEnumerable<Domain.Entities.User>> IUserRepository.GetAllUsers()
         {
             return await _hotelDbContext.Users.ToListAsync();
         }
 
-        async Task<Domain.Order.Entities.User> IUserRepository.GetUser(int id)
+        async Task<Domain.Entities.User?> IUserRepository.GetUser(int id)
         {
             return await _hotelDbContext.Users.FindAsync(id);
         }
 
-        async Task<Domain.Order.Entities.User> IUserRepository.UpdateUser(Domain.Order.Entities.User user)
+        async Task<Domain.Entities.User?> IUserRepository.UpdateUser(Domain.Entities.User user)
         {
             _hotelDbContext.Users.Update(user);
             await _hotelDbContext.SaveChangesAsync();

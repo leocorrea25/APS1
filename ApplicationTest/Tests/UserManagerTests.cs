@@ -3,9 +3,8 @@ using Application.Address.Ports;
 using Application.User;
 using Application.User.Ports;
 using Application.User.Request;
-using Domain.Order.Entities;
-using Domain.Order.Ports;
-using Domain.Order.Requests;
+using Domain.Entities;
+using Domain.Ports;
 using Moq;
 
 namespace ApplicationTest.Tests;
@@ -25,10 +24,10 @@ class UserManagerTests
         _addressManager = new AddressManager(_addressRepository.Object);
 
         _userRepository = new Mock<IUserRepository>();
-        _userManager = new UserMenager(
+        _userManager = new UserManager(
                 _userRepository.Object,
                 _addressManager);
-        
+
         _fakeUser = new User()
         {
             Id = 123,
@@ -45,14 +44,17 @@ class UserManagerTests
         _userRepository.Setup(r => r.GetUserByEmail(email))
                 .Returns(Task.FromResult(_fakeUser));
 
-        var user = await _userManager.Authenticate(new LoginRequest
+        var userVal = await _userManager.Authenticate(new UserLoginRequest
         {
-            Username = email,
+            Email = email,
             Password = password
         });
 
+        var user = userVal.Data;
+
         Assert.That(user, Is.Not.Null);
-        Assert.Multiple(() => {
+        Assert.Multiple(() =>
+        {
             Assert.That(user.Id, Is.EqualTo(123));
             Assert.That(user.Email, Is.EqualTo(email));
             Assert.That(user.Token, Is.Not.Empty);
@@ -62,7 +64,7 @@ class UserManagerTests
     [Test]
     public async Task ShouldCreateUser()
     {
-        var request = new UserRequest
+        var request = new CreateUserRequest
         {
             Name = "John Doe",
             Email = "johndoe@email.com",
@@ -75,7 +77,9 @@ class UserManagerTests
             Password = "P4ssw0rd!123",
         };
 
-        var user = await _userManager.CreateUser(request);
+        var userVal = await _userManager.CreateUser(request);
+
+        var user = userVal.Data;
 
         Assert.That(user, Is.Not.Null);
         Assert.That(user.Name, Is.EqualTo("John Doe"));

@@ -1,4 +1,4 @@
-﻿using Domain.Order.Ports;
+﻿using Domain.Ports;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Order
@@ -12,7 +12,7 @@ namespace Data.Order
             _hotelDbContext = hotelDbContext;
         }
 
-        public async Task<int> Create(Domain.Order.Entities.Order order)
+        public async Task<int> Create(Domain.Entities.Order order)
         {
             await _hotelDbContext.Orders.AddAsync(order);
             await _hotelDbContext.SaveChangesAsync();
@@ -29,16 +29,16 @@ namespace Data.Order
             }
         }
 
-        public async Task<Domain.Order.Entities.Order> Get(int id) => await _hotelDbContext.Orders
+        public async Task<Domain.Entities.Order> Get(int id) => await _hotelDbContext.Orders
                 .Include(o => o.Address) // Inclui a propriedade de navegação Address
                 .FirstOrDefaultAsync(o => o.Id == id);
 
-        public async Task<IEnumerable<Domain.Order.Entities.Order>> GetAll()
+        public async Task<IEnumerable<Domain.Entities.Order>> GetAll()
         {
             return await _hotelDbContext.Orders.ToListAsync();
         }
 
-        public async Task Update(Domain.Order.Entities.Order order)
+        public async Task Update(Domain.Entities.Order order)
         {
             var existingOrder = await _hotelDbContext.Orders.FindAsync(order.Id);
             if (existingOrder != null)

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Data.Address
 {
-    public class AddressConfiguration : IEntityTypeConfiguration<Domain.Order.Entities.Address>
+    public class AddressConfiguration : IEntityTypeConfiguration<Domain.Entities.Address>
     {
-        public void Configure(EntityTypeBuilder<Domain.Order.Entities.Address> builder)
+        public void Configure(EntityTypeBuilder<Domain.Entities.Address> builder)
         {
             // Define a chave primária
             builder.HasKey(e => e.Id);

@@ -1,6 +1,6 @@
 ﻿using Application.Order.Ports;
 using Application.Order.Request;
-using Domain.Order.Entities;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

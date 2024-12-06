@@ -1,24 +1,16 @@
 using Application.Address;
 using Application.Address.Ports;
-using Application.Booking;
-using Application.Guest;
 using Application.Order;
 using Application.Order.Ports;
-using Application.Ports;
 using Application.Product;
 using Application.Product.Ports;
-using Application.Room;
 using Application.User;
 using Application.User.Ports;
 using Data;
 using Data.Address;
-using Data.Booking;
-using Data.Guest;
 using Data.Order;
 using Data.Product;
-using Data.Room;
 using Data.User;
-using Domain.Order.Ports;
 using Domain.Ports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,16 +24,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 #region Service Registrations
-builder.Services.AddScoped<IGuestManager, GuestManager>();
-builder.Services.AddScoped<IGuestRepository, GuestRepository>();
-builder.Services.AddScoped<IRoomRepository, RoomRepository>();
-builder.Services.AddScoped<IRoomManager, RoomManager>();
-builder.Services.AddScoped<IBookingManager, BookingManager>();
-builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IOrderManager, OrderManager>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IUserManager, UserMenager>();
+builder.Services.AddScoped<IUserManager, UserManager>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IAddressManager, AddressManager>();
 builder.Services.AddScoped<IProductManager, ProductManager>();
@@ -54,7 +40,7 @@ builder.Services.AddDbContext<HotelDbContext>(
     options => options.UseSqlServer(connectionString));
 #endregion
 
-// Configuração de CORS
+// Configuraï¿½ï¿½o de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
@@ -63,7 +49,7 @@ builder.Services.AddCors(options =>
                           .AllowAnyMethod());
 });
 
-// Configuração de JWT
+// Configuraï¿½ï¿½o de JWT
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:SecretKey"]);
 builder.Services.AddAuthentication(options =>
 {
@@ -83,7 +69,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Configuração do Swagger para Suporte a Bearer Token
+// Configuraï¿½ï¿½o do Swagger para Suporte a Bearer Token
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });

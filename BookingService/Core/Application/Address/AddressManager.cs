@@ -1,5 +1,5 @@
 ﻿using Application.Address.Ports;
-using Domain.Order.Ports;
+using Domain.Ports;
 
 namespace Application.Address
 {
@@ -12,7 +12,7 @@ namespace Application.Address
             _addressRepository = addressRepository;
         }
 
-        async Task<Domain.Order.Entities.Address> IAddressManager.CreateAddress(Domain.Order.Entities.Address addressRequest)
+        async Task<Domain.Entities.Address> IAddressManager.CreateAddress(Domain.Entities.Address addressRequest)
         {
             return await _addressRepository.CreateAddress(addressRequest);
         }
@@ -22,23 +22,23 @@ namespace Application.Address
             return await _addressRepository.DeleteAddress(addressId);
         }
 
-        async Task<Domain.Order.Entities.Address> IAddressManager.GetAddress(int addressId)
+        async Task<Domain.Entities.Address> IAddressManager.GetAddress(int addressId)
         {
             return await _addressRepository.GetAddress(addressId);
         }
 
-        async Task<Domain.Order.Entities.Address> IAddressManager.GetAddressForPAndN(int postalCode, int number)
+        async Task<Domain.Entities.Address> IAddressManager.GetAddressForPAndN(int postalCode, int number)
         {
             var addresses = await _addressRepository.GetAllAddresses();
             return addresses.FirstOrDefault(a => a.PostalCode == postalCode && a.Number == number);
         }
 
-        async Task<IEnumerable<Domain.Order.Entities.Address>> IAddressManager.GetAllAddresses()
+        async Task<IEnumerable<Domain.Entities.Address>> IAddressManager.GetAllAddresses()
         {
             return await _addressRepository.GetAllAddresses();
         }
 
-        async Task<Domain.Order.Entities.Address> IAddressManager.UpdateAddress(Domain.Order.Entities.Address addressRequest)
+        async Task<Domain.Entities.Address> IAddressManager.UpdateAddress(Domain.Entities.Address addressRequest)
         {
             return await _addressRepository.UpdateAddress(addressRequest);
         }

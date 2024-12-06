@@ -1,8 +1,8 @@
 ﻿namespace Application.User.Request
 {
-    public class LoginRequest
+    public class UserLoginRequest
     {
-        public string Username { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 }

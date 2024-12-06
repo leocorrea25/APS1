@@ -8,11 +8,11 @@ namespace Application.Address.Ports
 {
     public interface IAddressManager
     {
-        Task<Domain.Order.Entities.Address> CreateAddress(Domain.Order.Entities.Address addressRequest);
+        Task<Domain.Entities.Address> CreateAddress(Domain.Entities.Address addressRequest);
         Task<bool> DeleteAddress(int addressId);
-        Task<IEnumerable<Domain.Order.Entities.Address>> GetAllAddresses();
-        Task<Domain.Order.Entities.Address> GetAddressForPAndN(int PostalCode, int Number);
-        Task<Domain.Order.Entities.Address> GetAddress(int addressId);
-        Task<Domain.Order.Entities.Address> UpdateAddress(Domain.Order.Entities.Address addressRequest);
+        Task<IEnumerable<Domain.Entities.Address>> GetAllAddresses();
+        Task<Domain.Entities.Address> GetAddressForPAndN(int PostalCode, int Number);
+        Task<Domain.Entities.Address> GetAddress(int addressId);
+        Task<Domain.Entities.Address> UpdateAddress(Domain.Entities.Address addressRequest);
     }
 }

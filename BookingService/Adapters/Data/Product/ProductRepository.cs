@@ -1,4 +1,4 @@
-﻿using Domain.Order.Ports;
+﻿using Domain.Ports;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Product
@@ -12,7 +12,7 @@ namespace Data.Product
             _hotelDbContext = hotelDbContext;
         }
 
-        async Task<Domain.Order.Entities.Product> IProductRepository.CreateProduct(Domain.Order.Entities.Product product)
+        async Task<Domain.Entities.Product> IProductRepository.CreateProduct(Domain.Entities.Product product)
         {
             _hotelDbContext.Products.Add(product);
             await _hotelDbContext.SaveChangesAsync();
@@ -32,17 +32,17 @@ namespace Data.Product
             return true;
         }
 
-        async Task<IEnumerable<Domain.Order.Entities.Product>> IProductRepository.GetAllProducts()
+        async Task<IEnumerable<Domain.Entities.Product>> IProductRepository.GetAllProducts()
         {
             return await _hotelDbContext.Products.ToListAsync();
         }
 
-        async Task<Domain.Order.Entities.Product> IProductRepository.GetProduct(int id)
+        async Task<Domain.Entities.Product> IProductRepository.GetProduct(int id)
         {
             return await _hotelDbContext.Products.FindAsync(id);
         }
 
-        async Task<Domain.Order.Entities.Product> IProductRepository.UpdateProduct(Domain.Order.Entities.Product product)
+        async Task<Domain.Entities.Product> IProductRepository.UpdateProduct(Domain.Entities.Product product)
         {
             var existingProduct = await _hotelDbContext.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == product.Id);
             if (existingProduct == null)

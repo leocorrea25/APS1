@@ -1,4 +1,4 @@
-﻿using Domain.Order.Ports;
+﻿using Domain.Ports;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Address
@@ -12,7 +12,7 @@ namespace Data.Address
             _hotelDbContext = hotelDbContext;
         }
 
-        async Task<Domain.Order.Entities.Address> IAddressRepository.CreateAddress(Domain.Order.Entities.Address address)
+        async Task<Domain.Entities.Address> IAddressRepository.CreateAddress(Domain.Entities.Address address)
         {
             _hotelDbContext.Addresses.Add(address);
             await _hotelDbContext.SaveChangesAsync();
@@ -32,17 +32,17 @@ namespace Data.Address
             return true;
         }
 
-        async Task<Domain.Order.Entities.Address> IAddressRepository.GetAddress(int id)
+        async Task<Domain.Entities.Address> IAddressRepository.GetAddress(int id)
         {
             return await _hotelDbContext.Addresses.FindAsync(id);
         }
 
-        async Task<IEnumerable<Domain.Order.Entities.Address>> IAddressRepository.GetAllAddresses()
+        async Task<IEnumerable<Domain.Entities.Address>> IAddressRepository.GetAllAddresses()
         {
             return await _hotelDbContext.Addresses.ToListAsync();
         }
 
-        async Task<Domain.Order.Entities.Address> IAddressRepository.UpdateAddress(Domain.Order.Entities.Address address)
+        async Task<Domain.Entities.Address> IAddressRepository.UpdateAddress(Domain.Entities.Address address)
         {
             _hotelDbContext.Addresses.Update(address);
             await _hotelDbContext.SaveChangesAsync();

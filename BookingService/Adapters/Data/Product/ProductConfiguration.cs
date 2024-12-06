@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Product
 {
-    public class ProductConfiguration : IEntityTypeConfiguration<Domain.Order.Entities.Product>
+    public class ProductConfiguration : IEntityTypeConfiguration<Domain.Entities.Product>
     {
-        public void Configure(EntityTypeBuilder<Domain.Order.Entities.Product> builder)
+        public void Configure(EntityTypeBuilder<Domain.Entities.Product> builder)
         {
             // Define a chave primária
             builder.HasKey(p => p.Id);

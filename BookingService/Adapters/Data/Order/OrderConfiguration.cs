@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.Order.Entities;
+using Domain.Entities;
 
 namespace Data.Order
 {
-    public class OrderConfiguration : IEntityTypeConfiguration<Domain.Order.Entities.Order>
+    public class OrderConfiguration : IEntityTypeConfiguration<Domain.Entities.Order>
     {
-        public void Configure(EntityTypeBuilder<Domain.Order.Entities.Order> builder)
+        public void Configure(EntityTypeBuilder<Domain.Entities.Order> builder)
         {
             builder.HasKey(e => e.Id);
 

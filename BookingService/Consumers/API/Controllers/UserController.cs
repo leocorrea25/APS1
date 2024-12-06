@@ -1,5 +1,5 @@
 ﻿using Application.User.Ports;
-using Domain.Order.Entities;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Domain.Order.Requests;
+using Application.User.Request;
 
 
 namespace API.Controllers
@@ -26,13 +27,16 @@ namespace API.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(Application.User.Request.LoginRequest loginRequest)
+        public async Task<IActionResult> Login(UserLoginRequest loginRequest)
         {
-            var user = await _userManager.Authenticate(loginRequest);
-            if (user == null)
+            var userVal = await _userManager.Authenticate(loginRequest);
+
+            if (!userVal.IsValid)
             {
                 return Unauthorized();
             }
+
+            var user = userVal.Value;
 
             // Carregar a chave secreta a partir da configuração
             string? secretKey = _configuration["JwtSettings:SecretKey"];
@@ -63,13 +67,16 @@ namespace API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<User>> CreateUser([FromBody] UserRequest userRequest)
+        public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserRequest userRequest)
         {
-            var user = await _userManager.CreateUser(userRequest);
-            if (user == null)
+            var userVal = await _userManager.CreateUser(userRequest);
+            if (!userVal.IsValid)
             {
-                return BadRequest("Invalid data.");
+                return BadRequest(userVal.Message);
             }
+
+            var user = userVal.Value;
+
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
@@ -77,49 +84,54 @@ namespace API.Controllers
         [Authorize]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
-            var user = await _userManager.DeleteUser(id);
-            if (user == null)
+            var userVal = await _userManager.DeleteUser(id);
+            if (!userVal.IsValid)
             {
                 return NotFound();
             }
-            return Ok(user);
+            return Ok(userVal.Value);
         }
 
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
-            var users = await _userManager.GetAllUsers();
-            return Ok(users);
+            var usersVal = await _userManager.GetAllUsers();
+
+            if (!usersVal.IsValid)
+            {
+                return NotFound();
+            }
+
+            return Ok(usersVal.Value);
         }
 
         [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _userManager.GetUser(id);
-            if (user == null)
+            var userVal = await _userManager.GetUser(id);
+
+            if (!userVal.IsValid)
             {
                 return NotFound();
             }
-            return Ok(user);
+
+            return Ok(userVal.Value);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut()]
         [Authorize]
-        public async Task<ActionResult<User>> UpdateUser(int id, [FromBody] User user)
+        public async Task<ActionResult<User>> UpdateUser([FromBody] UpdateUserRequest request)
         {
-            if (id != user.Id)
-            {
-                return BadRequest("User ID mismatch.");
-            }
+            Console.WriteLine("Updating user");
+            var updatedUserVal = await _userManager.UpdateUser(request);
 
-            var updatedUser = await _userManager.UpdateUser(user);
-            if (updatedUser == null)
+            if (!updatedUserVal.IsValid)
             {
-                return NotFound();
+                return BadRequest(updatedUserVal.Message);
             }
-            return Ok(updatedUser);
+            return Ok(updatedUserVal.Value);
         }
     }
 }

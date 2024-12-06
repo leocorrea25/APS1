@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.Order.Entities
+namespace Application.Order.Request
 {
     public class OrderRequest
     {

@@ -1,7 +1,7 @@
 using Application.Product;
 using Application.Product.Ports;
-using Domain.Order.Entities;
-using Domain.Order.Ports;
+using Domain.Entities;
+using Domain.Ports;
 using Domain.Order.Requests;
 using Moq;
 
