@@ -1,13 +1,15 @@
 # ECommerce API
 
-English
-[Português](README.pt-br.md)
+- → English
+- [Português](README.pt-br.md)
 
 ## Dependencies
 
 ```
 dotnet-sdk >= 8.0
-mssql-server >= 2019
+mssql-server >= 15.0 (2019)
 ```
 
-## Quick Start
+## Entity-Relationship Diagram
+
+![Entity-Relationship Diagram](./docs/er-diagram.png)
