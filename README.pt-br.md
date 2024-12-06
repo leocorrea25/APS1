@@ -65,11 +65,11 @@ erDiagram
         Int ProductQuantity
     }
 
-Users ||--|| Addresses : Has
-Users ||--o{ Products : Has
-Orders }o--|| Users : Has
-Products ||--o{ Orders : Has
-Orders }|--o| Addresses : Has
+    Users ||--|| Addresses : Has
+    Users ||--o{ Products : Has
+    Orders }o--|| Users : Has
+    Products ||--o{ Orders : Has
+    Orders }|--o| Addresses : Has
 
 ```
 
