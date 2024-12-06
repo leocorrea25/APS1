@@ -25,8 +25,8 @@ namespace API.Controllers
         [Authorize]
         public async Task<IActionResult> CreateOrder([FromBody] OrderRequest order)
         {
-
             var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (string.IsNullOrEmpty(userIdString))
             {
                 return Unauthorized("Usuário não autenticado.");
@@ -37,7 +37,7 @@ namespace API.Controllers
                 return Unauthorized("ID de usuário inválido.");
             }
             order.UserId = userId;
- 
+
             var response = await _orderManager.CreateOrder(order);
             if (response != null)
             {

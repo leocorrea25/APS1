@@ -185,11 +185,8 @@ namespace Application.User
 
         async Task<ValidationResult<Domain.Entities.User>> IUserManager.UpdateUser(UpdateUserRequest request)
         {
-
-            System.Console.WriteLine("UpdateUserRequest: " + request);
             try
             {
-
                 var currentUser = await _userRepository.GetUser(request.Id);
 
                 if (currentUser == null)
@@ -197,7 +194,6 @@ namespace Application.User
                     return Error(new ValidationException("User not found."));
                 }
 
-                System.Console.WriteLine("inside the try");
                 if (request.Address != null)
                 {
                     var address = new Domain.Entities.Address
@@ -224,8 +220,6 @@ namespace Application.User
                 {
                     return Error(new ValidationException("Failed to update user."));
                 }
-
-                System.Console.WriteLine("updated repository");
 
                 return Success(newUser);
             }

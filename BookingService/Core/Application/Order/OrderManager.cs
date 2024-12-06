@@ -30,9 +30,13 @@ namespace Application.Order
             {
                 // Verifique se o usuário é um comprador e não um vendedor
                 var user = await _userRepository.GetUser(request.UserId);
-                if (user == null || user.IsSeller)
+                if (user == null)
                 {
-                    throw new Exception("Usuario não pode comprar o produto, pois é um vendedor");
+                    throw new Exception("Usuário não encontrado");
+                }
+                else if (user.IsSeller)
+                {
+                    throw new Exception("Usuário não pode comprar o produto, pois é um vendedor");
                 }
 
                 // Se a opção de entrega for "retirada", o endereço não é necessário
@@ -48,7 +52,7 @@ namespace Application.Order
                 var product = await _productRepository.GetProduct(request.ProductId);
                 if (product == null || product.Quantity < request.ProductQuantity)
                 {
-                    throw new Exception("The product is out of stock or does not have enough quantity");
+                    throw new Exception("O produto não foi encontrado ou a quantidade disponível é insuficiente");
                 }
 
                 // Atualize a quantidade do produto
@@ -69,13 +73,13 @@ namespace Application.Order
                 };
 
                 // Crie a ordem no repositório
-                 await _orderRepository.Create(order);
+                await _orderRepository.Create(order);
 
                 return order;
             }
             catch (Exception ex)
             {
-                throw new Exception("The order is not valid: " + ex.Message);
+                throw new Exception("Pedido invalido: " + ex.Message);
             }
         }
 
