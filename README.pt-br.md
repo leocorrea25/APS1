@@ -104,4 +104,4 @@ dotnet run --project BookingService/Consumers/API/API.csproj
 
 Acesse a URL `https://localhost:5001/swagger` para testar a API ou utilize o seu cliente HTTP favorito, todos os requests serao documentados atraves do cURL.
 
-[Documentacao dos Endpoints](./docs/endpoints.md)
+[Documentacao dos Endpoints](./docs/pt-br/menu.md)
