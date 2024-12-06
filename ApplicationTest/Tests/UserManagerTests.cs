@@ -8,6 +8,8 @@ using Domain.Order.Ports;
 using Domain.Order.Requests;
 using Moq;
 
+namespace ApplicationTest.Tests;
+
 class UserManagerTests
 {
     private User _fakeUser;

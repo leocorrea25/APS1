@@ -5,6 +5,8 @@ using Domain.Order.Ports;
 using Domain.Order.Requests;
 using Moq;
 
+namespace ApplicationTest.Tests;
+
 class ProductManagerTests
 {
     private IQueryable<User> _fakeSellers;
