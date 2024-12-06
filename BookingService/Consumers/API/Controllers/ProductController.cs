@@ -35,7 +35,7 @@ namespace API.Controllers
             {
                 return BadRequest("User not found or invalid data.");
             }
-            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+            return CreatedAtAction(nameof(GetProduct), new { productId = product.Id }, product);
         }
 
         [HttpDelete("{productId}")]
