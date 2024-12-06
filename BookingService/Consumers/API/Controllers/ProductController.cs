@@ -38,11 +38,11 @@ namespace API.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{productId}")]
         [Authorize]
-        public async Task<ActionResult<Product>> DeleteProduct(int id)
+        public async Task<ActionResult<Product>> DeleteProduct(int productId)
         {
-            var product = await _productManager.DeleteProduct(id);
+            var product = await _productManager.DeleteProduct(productId);
             if (product == null)
             {
                 return NotFound();
@@ -58,11 +58,11 @@ namespace API.Controllers
             return Ok(products);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{productId}")]
         [Authorize]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<Product>> GetProduct(int productId)
         {
-            var product = await _productManager.GetProduct(id);
+            var product = await _productManager.GetProduct(productId);
             if (product == null)
             {
                 return NotFound();
@@ -70,9 +70,9 @@ namespace API.Controllers
             return Ok(product);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{productId}")]
         [Authorize]
-        public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] ProductRequest product)
+        public async Task<ActionResult<Product>> UpdateProduct(int productId, [FromBody] ProductRequest product)
         {
             var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdString))
@@ -85,7 +85,7 @@ namespace API.Controllers
                 return Unauthorized("ID de usuário inválido.");
             }
 
-            if (id != product.Id)
+            if (productId != product.Id)
             {
                 return BadRequest("Product ID mismatch.");
             }

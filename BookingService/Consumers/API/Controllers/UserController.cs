@@ -80,7 +80,7 @@ namespace API.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{userId}")]
         [Authorize]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
@@ -106,11 +106,11 @@ namespace API.Controllers
             return Ok(usersVal.Value);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{userId}")]
         [Authorize]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<User>> GetUser(int userId)
         {
-            var userVal = await _userManager.GetUser(id);
+            var userVal = await _userManager.GetUser(userId);
 
             if (!userVal.IsValid)
             {
@@ -120,11 +120,11 @@ namespace API.Controllers
             return Ok(userVal.Value);
         }
 
-        [HttpPut()]
+        [HttpPut("{userId}")]
         [Authorize]
-        public async Task<ActionResult<User>> UpdateUser([FromBody] UpdateUserRequest request)
+        public async Task<ActionResult<User>> UpdateUser(int userId, [FromBody] UpdateUserRequest request)
         {
-            Console.WriteLine("Updating user");
+            request.Id = userId;
             var updatedUserVal = await _userManager.UpdateUser(request);
 
             if (!updatedUserVal.IsValid)
