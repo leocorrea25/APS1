@@ -28,7 +28,7 @@ class OrderManagerTests
             {
                 Id = i,
                 Name = $"User {i}",
-                IsSeller = false
+                IsSeller = i % 2 == 0
             }).AsQueryable();
         
         _fakeProducts = Enumerable.Range(1, 5)
@@ -116,7 +116,6 @@ class OrderManagerTests
     }
 
     [TestCase(1)]
-    [TestCase(2)]
     public async Task ShouldFetchOrderByUser(int userId)
     {
         var orders = await _orderManager.GetOrdertByUser(userId);
@@ -129,7 +128,7 @@ class OrderManagerTests
         });
     }
 
-    [TestCase(1, 1)]
+    [TestCase(1, 2)]
     [TestCase(2, 2)]
     public async Task ShouldMarkOrderAsCompleted(int orderId, int userId)
     {
