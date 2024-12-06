@@ -1,4 +1,4 @@
-# Buscar todos os Produtos
+# Get all Products 
 
 ```bash
 curl -X 'GET' \

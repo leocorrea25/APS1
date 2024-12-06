@@ -1,4 +1,4 @@
-# Buscar Produos pelo Usuário Logado
+# Get Products by User
 
 Retorna todos os produtos de um usuário logado.
 

@@ -1,4 +1,4 @@
-# Atualizar Produto
+# Update Product
 
 ```bash
 curl -X 'PUT' \

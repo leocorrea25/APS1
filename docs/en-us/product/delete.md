@@ -1,4 +1,4 @@
-# Apagar Produto
+# Delete Product
 
 ```bash
 curl -X 'DELETE' \
